@@ -36,6 +36,7 @@ public class WeaponDefinition
     public float delayBetweenShots = 0;
     public float velocity = 20; // Speed of projectiles
 }
+
 public class Weapon : MonoBehaviour
 {
     static public Transform PROJECTILE_ANCHOR;
@@ -63,32 +64,23 @@ public class Weapon : MonoBehaviour
             PROJECTILE_ANCHOR = go.transform;
         }
 
-        shotPointTransform = transform.GetChild(0);  //There is only one chile and it is what we need
+        shotPointTransform = transform.GetChild(0); //There is only one chile and it is what we need
 
         // Call SetType() for the default _type of WeaponType.none
         SetType(_type);
-
-
-
 
         // Find the fireDelegate of the root GameObject
         GameObject rootGO = transform.root.gameObject;
 
         Hero hero = GetComponentInParent<Hero>();
-        if (hero != null) hero.fireEvent += Fire;
-
+        if (hero != null)
+            hero.fireEvent += Fire;
     }
 
     public eWeaponType type
     {
-        get
-        {
-            return (_type);
-        }
-        set
-        {
-            SetType(value);
-        }
+        get { return (_type); }
+        set { SetType(value); }
     }
 
     public void SetType(eWeaponType wt)
@@ -108,7 +100,8 @@ public class Weapon : MonoBehaviour
         def = Main.GET_WEAPON_DEFINITION(_type);
 
         //Destroy any old model and then attach a model for this weapon type
-        if (weaponModel != null) Destroy(weaponModel);
+        if (weaponModel != null)
+            Destroy(weaponModel);
         weaponModel = Instantiate<GameObject>(def.weaponModelPrefab, transform);
         weaponModel.transform.localPosition = Vector3.zero;
         weaponModel.transform.localScale = Vector3.one;
@@ -119,10 +112,11 @@ public class Weapon : MonoBehaviour
     public void Fire()
     {
         // If this.gameObject is inactive, return
-        if (!gameObject.activeInHierarchy) return;
+        if (!gameObject.activeInHierarchy)
+            return;
         // If it hasn't been enough time between shots, return
-        if (Time.time < nextShotTime) return;
-
+        if (Time.time < nextShotTime)
+            return;
 
         ProjectileHero p;
         Vector3 vel = Vector3.up * def.velocity;
@@ -136,13 +130,19 @@ public class Weapon : MonoBehaviour
 
             case eWeaponType.spread:
                 p = MakeProjectile(); // Make middle Projectile
-                p.vel = vel; ;
+                p.vel = vel;
+                ;
                 p = MakeProjectile(); // Make right Projectile
                 p.transform.rotation = Quaternion.AngleAxis(10, Vector3.back);
                 p.vel = p.transform.rotation * vel;
                 p = MakeProjectile(); // Make left Projectile
                 p.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
                 p.vel = p.transform.rotation * vel;
+                break;
+
+            case eWeaponType.laser:
+                p = MakeProjectile();
+                p.vel = vel;
                 break;
         }
     }
@@ -153,11 +153,11 @@ public class Weapon : MonoBehaviour
         ProjectileHero p = go.GetComponent<ProjectileHero>();
 
         Vector3 pos = shotPointTransform.position;
-        pos.z = 0;                                                           
+        pos.z = 0;
         p.transform.position = pos;
 
         p.type = type;
-        nextShotTime = Time.time + def.delayBetweenShots;                    
+        nextShotTime = Time.time + def.delayBetweenShots;
         return (p);
     }
 }
