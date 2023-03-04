@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class Main : MonoBehaviour {
-
+public class Main : MonoBehaviour
+{
     static public Main S; // A singleton for Main
     static Dictionary<eWeaponType, WeaponDefinition> WEAP_DICT;
 
@@ -19,19 +20,26 @@ public class Main : MonoBehaviour {
     public GameObject prefabPowerUp;
     public eWeaponType[] powerUpFrequency = new eWeaponType[]
     {
-        eWeaponType.blaster, eWeaponType.blaster, eWeaponType.spread, eWeaponType.shield
+        eWeaponType.blaster,
+        eWeaponType.blaster,
+        eWeaponType.spread,
+        eWeaponType.shield
     };
 
-    private BoundsCheck bndCheck;
+    public Text score100;
+    public Text score200;
+    public Text score400;
 
+    private BoundsCheck bndCheck;
 
     /// <summary>
     /// Called by an Enemy ship whenever it is destroyed. It sometimes
     /// creates a powerup in place of the ship destroyed
     /// </summary>
     /// <param name="e">The enemy that is destroyed</param>
-    static public void SHIP_DESTROYED( Enemy e)
+    static public void SHIP_DESTROYED(Enemy e)
     {
+        print(e.score);
         // Potentially generate a PowerUp
         if (Random.value <= e.powerUpDropChance)
         {
@@ -47,7 +55,12 @@ public class Main : MonoBehaviour {
 
             // Set it to the position of the destroyed ship
             pu.transform.position = e.transform.position;
+
+            
         }
+        // Spawn Text
+            GameObject text = Instantiate(e.score) as GameObject;
+            PowerUp pu = go.GetComponent<PowerUp>();
     }
 
     private void Awake()
@@ -61,7 +74,7 @@ public class Main : MonoBehaviour {
 
         // A generic Dictionary with WeaponType as the key
         WEAP_DICT = new Dictionary<eWeaponType, WeaponDefinition>();
-        foreach(WeaponDefinition def in weaponDefinitions)
+        foreach (WeaponDefinition def in weaponDefinitions)
         {
             WEAP_DICT[def.type] = def;
         }
@@ -69,12 +82,11 @@ public class Main : MonoBehaviour {
 
     public void SpawnEnemy()
     {
-        if(!spawnEnemies)
+        if (!spawnEnemies)
         {
             Invoke(nameof(SpawnEnemy), 1f / enemySpawnPerSecond);
             return;
         }
-
 
         // Pick a random Enemy prefab to instantiate
         int ndx = Random.Range(0, prefabEnemies.Length);
@@ -115,7 +127,6 @@ public class Main : MonoBehaviour {
     {
         S.DelayedRestart();
     }
-
 
     ///<summary>
     ///Static function that gets a WeaponDefinition from the WEAP_DICT static
