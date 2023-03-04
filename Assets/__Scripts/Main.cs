@@ -16,6 +16,9 @@ public class Main : MonoBehaviour
     public float enemyInsetDefault = 1.5f; // Padding for position
     public float gameRestartDelay = 2;
 
+    public Text uiText;
+    public static int score = 0;
+
     public WeaponDefinition[] weaponDefinitions;
     public GameObject prefabPowerUp;
     public eWeaponType[] powerUpFrequency = new eWeaponType[]
@@ -32,6 +35,13 @@ public class Main : MonoBehaviour
 
     private BoundsCheck bndCheck;
 
+ 
+
+    void Update()
+    {
+        uiText.text = "Score: " + score.ToString( "#,0" );
+    }
+
     /// <summary>
     /// Called by an Enemy ship whenever it is destroyed. It sometimes
     /// creates a powerup in place of the ship destroyed
@@ -39,7 +49,10 @@ public class Main : MonoBehaviour
     /// <param name="e">The enemy that is destroyed</param>
     static public void SHIP_DESTROYED(Enemy e)
     {
-        print(e.score);
+       
+        // Add to score total
+        score += e.score;
+
         // Potentially generate a PowerUp
         if (Random.value <= e.powerUpDropChance)
         {
@@ -58,9 +71,15 @@ public class Main : MonoBehaviour
 
             
         }
-        // Spawn Text
-            GameObject text = Instantiate(e.score) as GameObject;
-            PowerUp pu = go.GetComponent<PowerUp>();
+
+        // Generate a score text at destroyed enemy location
+        
+
+    }
+
+   void SetScoreText()
+    {
+       //playerScore.text = "Score: " + e.score.ToString();
     }
 
     private void Awake()
