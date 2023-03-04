@@ -52,7 +52,7 @@ public class Main : MonoBehaviour
         scoreCheat.text = scoreHolder.ToString();
 
         print(pos);
-        scoreCheat.transform.position = new Vector3(pos.x,pos.y, 1);
+        scoreCheat.transform.position = new Vector3(pos.x+1,pos.y+1, 5);
         
         StartCoroutine(waiter());
         }
