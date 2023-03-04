@@ -17,7 +17,12 @@ public class Main : MonoBehaviour
     public float gameRestartDelay = 2;
 
     public Text uiText;
+    public Text scoreCheat;
     public static int score = 0;
+    public static int scoreHolder = 0;
+
+    public static Vector3 pos;
+
 
     public WeaponDefinition[] weaponDefinitions;
     public GameObject prefabPowerUp;
@@ -29,10 +34,13 @@ public class Main : MonoBehaviour
         eWeaponType.shield
     };
 
-    public Text score100;
-    public Text score200;
-    public Text score400;
+    // public Text score100;
+    // public Text score200;
+    // public Text score300;
+    // public Text score400;
+    // public Text score1000;
 
+    
     private BoundsCheck bndCheck;
 
  
@@ -40,8 +48,24 @@ public class Main : MonoBehaviour
     void Update()
     {
         uiText.text = "Score: " + score.ToString( "#,0" );
+        if (scoreHolder != 0){
+        scoreCheat.text = scoreHolder.ToString();
+
+        print(pos);
+        scoreCheat.transform.position = new Vector3(pos.x,pos.y, 1);
+        
+        StartCoroutine(waiter());
+        }
+        
+        
     }
 
+IEnumerator waiter()
+{
+    yield return new WaitForSeconds(0.5f);
+    scoreHolder = 0;
+    scoreCheat.text = "";
+}
     /// <summary>
     /// Called by an Enemy ship whenever it is destroyed. It sometimes
     /// creates a powerup in place of the ship destroyed
@@ -49,9 +73,40 @@ public class Main : MonoBehaviour
     /// <param name="e">The enemy that is destroyed</param>
     static public void SHIP_DESTROYED(Enemy e)
     {
-       
         // Add to score total
         score += e.score;
+
+        scoreHolder = e.score;
+
+        pos = e.transform.position;
+       // Text my_text = GameObject.Find("ScoreNumber").GetComponent<Text>();
+
+        
+
+        // Generate a score text at destroyed enemy location
+        // if (e.score == 100) {
+        // //       GameObject canvas = GameObject.Find("Canvas");
+        // // Text tempTextBox = Instantiate(S.score100, e.transform.position, e.transform.rotation) as Text;
+        // //     tempTextBox.transform.SetParent(canvas.transform, false);
+
+        // // //Set the text box's text element font size and style:
+        // //            tempTextBox.fontSize = 21;
+        // //            //Set the text box's text element to the current textToDisplay:
+        // //            tempTextBox.transform.position = e.transform.position;
+        // //            tempTextBox.text = e.score.ToString();
+    
+
+
+        // }
+        // else if (e.score == 200) {
+
+        // }
+        // else if (e.score == 400) {
+            
+        // }
+        // else if (e.score == 1000) {
+            
+        // }
 
         // Potentially generate a PowerUp
         if (Random.value <= e.powerUpDropChance)
@@ -72,15 +127,11 @@ public class Main : MonoBehaviour
             
         }
 
-        // Generate a score text at destroyed enemy location
         
 
+
     }
 
-   void SetScoreText()
-    {
-       //playerScore.text = "Score: " + e.score.ToString();
-    }
 
     private void Awake()
     {
@@ -138,6 +189,9 @@ public class Main : MonoBehaviour
 
     public void Restart()
     {
+        scoreHolder = 0;
+        scoreCheat.text = "";
+        score = 0;
         // Reload _Scene_0 to restart the game
         SceneManager.LoadScene("__Scene_0");
     }
